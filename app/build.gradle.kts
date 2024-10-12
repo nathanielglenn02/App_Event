@@ -7,6 +7,11 @@ android {
     namespace = "com.example.app_event"
     compileSdk = 34
 
+
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.example.app_event"
         minSdk = 24
@@ -36,6 +41,34 @@ android {
 }
 
 dependencies {
+
+
+    // Retrofit for networking
+    implementation(libs.retrofit)
+    implementation(libs.retrofit2.converter.gson)
+
+    // Glide for image loading
+    implementation(libs.glide)
+    implementation(libs.glide.compiler)
+
+    // RecyclerView
+    implementation(libs.androidx.recyclerview)
+
+    // LiveData and ViewModel
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.lifecycle.livedata.ktx)
+
+    // Coroutines for background tasks
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Navigation component for bottom navigation
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
+
+    // ViewModel and LiveData
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.lifecycle.livedata.ktx)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
