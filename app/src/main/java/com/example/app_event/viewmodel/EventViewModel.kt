@@ -1,3 +1,5 @@
+package com.example.app_event.viewmodel
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -6,41 +8,33 @@ import com.example.app_event.repository.EventRepository
 
 class EventViewModel : ViewModel() {
 
-    private val repository = EventRepository()  // Inisialisasi repository
-
-    // LiveData untuk status loading
+    private val repository = EventRepository()
     private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
 
-    // LiveData untuk event
-    val events: LiveData<List<EventItem>> = repository.events  // Ambil data event dari repository
-
-    // LiveData untuk hasil pencarian event
-    private val _searchResults = MutableLiveData<List<EventItem>>()  // Tambahkan ini untuk hasil pencarian
+    val events: LiveData<List<EventItem>> = repository.events
+    private val _searchResults = MutableLiveData<List<EventItem>>()
     val searchResults: LiveData<List<EventItem>> = _searchResults
+    private var lastStatus: Int = 1
 
-    // Fungsi untuk memuat event berdasarkan status
+    val error: LiveData<String> = repository.error
+
     fun loadEvents(status: Int) {
-        _isLoading.value = true  // Tampilkan indikator loading
-        repository.fetchEvents(status)  // Panggil fungsi di repository untuk ambil data
-
-        // Sembunyikan indikator loading setelah data berhasil dimuat
-        repository.events.observeForever {
-            _isLoading.value = false
-        }
+        _isLoading.value = true
+        lastStatus = status
+        repository.fetchEvents(status)
     }
 
-    // Fungsi untuk mencari event berdasarkan kata kunci
+
     fun searchEvents(query: String) {
         _isLoading.value = true
 
-        repository.searchEvents(query, { resultList ->
-            _searchResults.value = resultList  // Simpan hasil pencarian ke LiveData
+        repository.searchEvents(query) { resultList ->
+            _searchResults.value = resultList
             _isLoading.value = false
-        }, {
-            _searchResults.value = listOf()  // Kosongkan jika tidak ada hasil
-            _isLoading.value = false
-        })
+        }
+    }
+    fun getLastStatus(): Int {
+        return lastStatus
     }
 }
 

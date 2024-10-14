@@ -23,5 +23,7 @@ data class EventItem(
     @SerializedName("quota")
     val quota: Int = 0,
     @SerializedName("registrants")
-    val registrants: Int = 0
+    val registrants: Int = 0,
+    @SerializedName("link")
+    val evenLink: String = ""
 )

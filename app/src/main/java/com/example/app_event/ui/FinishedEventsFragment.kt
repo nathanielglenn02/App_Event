@@ -8,7 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.app_event.databinding.FragmentFinishedEventsBinding
-import EventViewModel
+import com.example.app_event.viewmodel.EventViewModel
+import android.widget.Toast
 
 class FinishedEventsFragment : Fragment() {
 
@@ -27,35 +28,28 @@ class FinishedEventsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Inisialisasi ViewModel
-        viewModel = ViewModelProvider(this).get(EventViewModel::class.java)
-
-        // Atur RecyclerView
+        viewModel = ViewModelProvider(this)[EventViewModel::class.java]
         binding.rvFinishedEvents.layoutManager = LinearLayoutManager(requireContext())
         binding.rvFinishedEvents.setHasFixedSize(true)
-
-        // Tampilkan ProgressBar saat data dimuat
         binding.progressBar.visibility = View.VISIBLE
-
-        // Muat data untuk event yang sudah selesai
-        viewModel.loadEvents(0)  // 0 untuk event yang sudah selesai
-
-        // Observasi data event selesai
+        viewModel.loadEvents(0)
         viewModel.events.observe(viewLifecycleOwner) { events ->
             binding.progressBar.visibility = View.GONE
-
             if (events.isNotEmpty()) {
                 val adapter = EventAdapter(events)
                 binding.rvFinishedEvents.adapter = adapter
             } else {
-                // Tangani jika data kosong atau gagal dimuat
+                viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
+                    if (!errorMessage.isNullOrEmpty()) {
+                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null  // Mencegah memory leaks
+        _binding = null
     }
 }

@@ -1,5 +1,6 @@
 package com.example.app_event.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,12 +12,12 @@ class DetailEventActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailEventBinding
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailEventBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Ambil data dari Intent
         val eventName = intent.getStringExtra("event_name")
         val ownerName = intent.getStringExtra("owner_name")
         val beginTime = intent.getStringExtra("begin_time")
@@ -25,20 +26,18 @@ class DetailEventActivity : AppCompatActivity() {
         val description = intent.getStringExtra("description")
         val imageLogo = intent.getStringExtra("image_logo")
         val eventLink = intent.getStringExtra("event_link")
+        val remainingQuota = quota-registrants
 
-        // Tampilkan data ke UI
         binding.tvEventName.text = eventName
         binding.tvOwnerName.text = ownerName
         binding.tvBeginTime.text = "Start: $beginTime"
-        binding.tvQuota.text = "Quota: $registrants / $quota"
+        binding.tvQuota.text = "Quota: $remainingQuota"
         binding.tvDescription.text = description
 
-        // Muat gambar menggunakan Glide
         Glide.with(this)
             .load(imageLogo)
             .into(binding.ivEventLogo)
 
-        // Buka link saat tombol ditekan
         binding.btnOpenLink.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(eventLink))
             startActivity(intent)

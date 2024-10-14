@@ -18,12 +18,10 @@ class EventAdapter(private val events: List<EventItem>) :
             binding.tvEventName.text = event.name
             binding.tvOwnerName.text = event.ownerName
 
-            // Memuat gambar event
             Glide.with(binding.root.context)
                 .load(event.imageLogo)
                 .into(binding.ivEventLogo)
 
-            // Saat item diklik, pindah ke DetailEventActivity
             binding.root.setOnClickListener {
                 val context = binding.root.context
                 val intent = Intent(context, DetailEventActivity::class.java)
@@ -34,7 +32,7 @@ class EventAdapter(private val events: List<EventItem>) :
                 intent.putExtra("registrants", event.registrants)
                 intent.putExtra("description", event.description)
                 intent.putExtra("image_logo", event.imageLogo)
-                intent.putExtra("event_link", event.id)
+                intent.putExtra("event_link", event.evenLink)
                 context.startActivity(intent)
             }
         }

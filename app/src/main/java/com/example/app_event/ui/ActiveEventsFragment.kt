@@ -1,10 +1,11 @@
 package com.example.app_event.ui
 
-import EventViewModel
+import com.example.app_event.viewmodel.EventViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,38 +28,28 @@ class ActiveEventsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Inisialisasi ViewModel
-        viewModel = ViewModelProvider(this).get(EventViewModel::class.java)
-
-        // Atur RecyclerView
+        viewModel = ViewModelProvider(this)[EventViewModel::class.java]
         binding.rvEvents.layoutManager = LinearLayoutManager(requireContext())
         binding.rvEvents.setHasFixedSize(true)
-
-        // Tampilkan ProgressBar saat data dimuat
         binding.progressBar.visibility = View.VISIBLE
-
-        // Muat data dari ViewModel
-        viewModel.loadEvents(1)  // 1 untuk event yang akan datang
-        
-
-        // Observasi perubahan data event
+        viewModel.loadEvents(1)
         viewModel.events.observe(viewLifecycleOwner) { events ->
-            // Sembunyikan ProgressBar saat data sudah dimuat
             binding.progressBar.visibility = View.GONE
-
-            // Jika ada data event, tampilkan di RecyclerView
             if (events.isNotEmpty()) {
                 val adapter = EventAdapter(events)
                 binding.rvEvents.adapter = adapter
             } else {
-                // Tangani jika data kosong atau gagal dimuat
+                viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
+                    if (!errorMessage.isNullOrEmpty()) {
+                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null  // Mencegah memory leaks
+        _binding = null
     }
 }

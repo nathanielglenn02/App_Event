@@ -1,10 +1,11 @@
 package com.example.app_event.ui
 
-import EventViewModel
+import com.example.app_event.viewmodel.EventViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,42 +29,33 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Inisialisasi ViewModel
-        viewModel = ViewModelProvider(this).get(EventViewModel::class.java)
-
-        // Atur RecyclerView untuk event yang aktif
-        binding.rvActiveEvents.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+        viewModel = ViewModelProvider(this)[EventViewModel::class.java]
+        binding.rvActiveEvents.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         binding.rvActiveEvents.setHasFixedSize(true)
-
-        // Atur RecyclerView untuk event yang sudah selesai
         binding.rvFinishedEvents.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         binding.rvFinishedEvents.setHasFixedSize(true)
-
-        // Tampilkan ProgressBar saat data dimuat
         binding.progressBar.visibility = View.VISIBLE
 
-        // Muat event yang sedang aktif (5 event)
-        viewModel.loadEvents(1)  // Status 1: Event yang akan datang
-
-        // Observasi event aktif dan tampilkan di RecyclerView
+        viewModel.loadEvents(1)
         viewModel.events.observe(viewLifecycleOwner) { events ->
             binding.progressBar.visibility = View.GONE
+
             if (events.isNotEmpty()) {
-                val activeAdapter = EventAdapter(events.take(5))  // Ambil 5 event aktif pertama
-                binding.rvActiveEvents.adapter = activeAdapter
+                if (viewModel.getLastStatus() == 1) {
+                    val activeAdapter = EventAdapter(events.take(5))
+                    binding.rvActiveEvents.adapter = activeAdapter
+                    viewModel.loadEvents(0)
+                } else if (viewModel.getLastStatus() == 0) {
+                    val finishedAdapter = EventAdapter(events.take(5))
+                    binding.rvFinishedEvents.adapter = finishedAdapter
+                }
             }
-        }
-
-        // Muat event yang sudah selesai (5 event)
-        viewModel.loadEvents(0)  // Status 0: Event yang sudah selesai
-
-        // Observasi event selesai dan tampilkan di RecyclerView
-        viewModel.events.observe(viewLifecycleOwner) { events ->
-            binding.progressBar.visibility = View.GONE
-            if (events.isNotEmpty()) {
-                val finishedAdapter = EventAdapter(events.take(5))  // Ambil 5 event selesai pertama
-                binding.rvFinishedEvents.adapter = finishedAdapter
+            else{
+                viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
+                    if (!errorMessage.isNullOrEmpty()) {
+                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }

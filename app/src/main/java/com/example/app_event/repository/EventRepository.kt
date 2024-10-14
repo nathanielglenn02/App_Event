@@ -11,15 +11,10 @@ import retrofit2.Response
 
 class EventRepository {
 
-    // LiveData untuk menyimpan daftar event
     private val _events = MutableLiveData<List<EventItem>>()
     val events: LiveData<List<EventItem>> = _events
-
-    // LiveData untuk status error
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
-
-    // Fungsi untuk mengambil event dari API berdasarkan status (0 untuk selesai, 1 untuk akan datang)
     fun fetchEvents(status: Int) {
         val client = RetrofitClient.instance.getEvents(status)
         client.enqueue(object : Callback<EventResponse> {
@@ -27,34 +22,32 @@ class EventRepository {
                 if (response.isSuccessful) {
                     _events.postValue(response.body()?.listEvents ?: listOf())
                 }else{
-                    _error.postValue("Error: ${response.message()}")  // Kode jika gagal mendapat data
+                    _error.postValue("Error: ${response.message()}")
                 }
             }
 
             override fun onFailure(call: Call<EventResponse>, t: Throwable) {
-                // Tangani kesalahan saat gagal memuat data dari API
-                _error.postValue("Failed to fetch data: ${t.message}")  // Error karena masalah jaringan atau lainnya
+                _error.postValue("Failed to fetch data: ${t.message}")
             }
         })
     }
 
     fun searchEvents(
         query: String,
-        onSuccess: (List<EventItem>) -> Unit,
-        onError: () -> Unit
+        onSuccess: (List<EventItem>) -> Unit
     ) {
-        val client = RetrofitClient.instance.searchEvents(query)  // Memanggil searchEvents dari ApiService
+        val client = RetrofitClient.instance.searchEvents(query)
         client.enqueue(object : Callback<EventResponse> {
             override fun onResponse(call: Call<EventResponse>, response: Response<EventResponse>) {
                 if (response.isSuccessful) {
-                    onSuccess(response.body()?.listEvents ?: listOf())  // Kirimkan hasil pencarian
+                    onSuccess(response.body()?.listEvents ?: listOf())
                 } else {
-                    _events.postValue(listOf())  // Kosongkan jika gagal
+                    _events.postValue(listOf())
                 }
             }
 
             override fun onFailure(call: Call<EventResponse>, t: Throwable) {
-                _events.postValue(listOf())  // Tangani error saat pencarian gagal
+                _events.postValue(listOf())
             }
         })
     }

@@ -1,6 +1,6 @@
 package com.example.app_event.ui
 
-import EventViewModel
+import com.example.app_event.viewmodel.EventViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,37 +29,29 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Inisialisasi ViewModel
-        viewModel = ViewModelProvider(this).get(EventViewModel::class.java)
-
-        // Atur RecyclerView
+        viewModel = ViewModelProvider(this)[EventViewModel::class.java]
         binding.rvSearchResults.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSearchResults.setHasFixedSize(true)
-
-        // Atur SearchView
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    // Panggil ViewModel untuk mencari event berdasarkan query
+                    binding.progressBar.visibility = View.VISIBLE
                     viewModel.searchEvents(query)
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                // Bisa digunakan untuk memberikan saran saat pengguna mengetik
                 return false
             }
         })
 
-        // Observasi hasil pencarian
         viewModel.searchResults.observe(viewLifecycleOwner) { results ->
+            binding.progressBar.visibility = View.GONE
             if (results.isNotEmpty()) {
                 val adapter = EventAdapter(results)
                 binding.rvSearchResults.adapter = adapter
             } else {
-                // Tampilkan pesan jika tidak ada hasil pencarian
                 Toast.makeText(requireContext(), "No results found", Toast.LENGTH_SHORT).show()
             }
         }
