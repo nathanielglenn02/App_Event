@@ -1,5 +1,7 @@
 package com.example.app_event.ui
 
+import ViewModelFactory
+import android.content.Intent
 import com.example.app_event.viewmodel.EventViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,6 +19,7 @@ class ActiveEventsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EventViewModel
+    private lateinit var viewModelFactory: ViewModelFactory
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,15 +31,23 @@ class ActiveEventsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[EventViewModel::class.java]
+
+        viewModelFactory = ViewModelFactory(requireContext())
+        viewModel = ViewModelProvider(this, viewModelFactory)[EventViewModel::class.java]
+
         binding.rvEvents.layoutManager = LinearLayoutManager(requireContext())
         binding.rvEvents.setHasFixedSize(true)
         binding.progressBar.visibility = View.VISIBLE
+
         viewModel.loadEvents(1)
         viewModel.events.observe(viewLifecycleOwner) { events ->
             binding.progressBar.visibility = View.GONE
             if (events.isNotEmpty()) {
-                val adapter = EventAdapter(events)
+                val adapter = EventAdapter(events) { event ->
+                    val intent = Intent(requireContext(), DetailEventActivity::class.java)
+                    intent.putExtra("event_name", event.name)
+                    startActivity(intent)
+                }
                 binding.rvEvents.adapter = adapter
             } else {
                 viewModel.error.observe(viewLifecycleOwner) { errorMessage ->

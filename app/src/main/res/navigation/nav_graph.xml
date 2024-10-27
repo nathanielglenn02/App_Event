@@ -28,4 +28,10 @@
         android:name="com.example.app_event.ui.SearchFragment"
         android:label="Search"
         tools:layout="@layout/fragment_search" />
+
+    <fragment
+        android:id="@+id/favouriteFragment"
+        android:name="com.example.app_event.ui.FavouriteFragment"
+        android:label="Favourite Events"
+        tools:layout="@layout/fragment_favourite" />
 </navigation>

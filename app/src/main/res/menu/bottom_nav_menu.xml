@@ -17,6 +17,10 @@
         android:id="@+id/nav_finished_events"
         android:icon="@drawable/ic_finished"
         android:title="@string/finished_events" />
+    <item
+        android:id="@+id/nav_favourite_events"
+        android:icon="@drawable/ic_favourite"
+        android:title="@string/favourite_events" />
 
 
 

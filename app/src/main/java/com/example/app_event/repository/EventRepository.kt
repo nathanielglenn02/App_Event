@@ -1,20 +1,27 @@
 package com.example.app_event.repository
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.app_event.model.EventItem
 import com.example.app_event.model.EventResponse
+import com.example.app_event.model.FavoriteEvent
 import com.example.app_event.network.RetrofitClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class EventRepository {
+class EventRepository(private val context: Context) {
 
     private val _events = MutableLiveData<List<EventItem>>()
     val events: LiveData<List<EventItem>> = _events
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
+
+    private val favoriteEventDao = AppDatabase.getDatabase(context).favoriteEventDao()
+
     fun fetchEvents(status: Int) {
         val client = RetrofitClient.instance.getEvents(status)
         client.enqueue(object : Callback<EventResponse> {
@@ -50,6 +57,34 @@ class EventRepository {
                 _events.postValue(listOf())
             }
         })
+    }
+
+    // Fungsi untuk menambahkan event ke daftar favorit
+    suspend fun addEventToFavorite(event: FavoriteEvent) {
+        withContext(Dispatchers.IO) {
+            favoriteEventDao.addToFavorite(event)
+        }
+    }
+
+    // Fungsi untuk menghapus event dari daftar favorit
+    suspend fun removeEventFromFavorite(event: FavoriteEvent) {
+        withContext(Dispatchers.IO) {
+            favoriteEventDao.removeFromFavorite(event)
+        }
+    }
+
+    // Mengambil semua event favorit
+    suspend fun getAllFavoriteEvents(): List<FavoriteEvent> {
+        return withContext(Dispatchers.IO) {
+            favoriteEventDao.getFavoriteEvents()
+        }
+    }
+
+    // Memeriksa apakah event sudah ada di daftar favorit
+    suspend fun isFavorite(eventId: Int): Boolean {
+        return withContext(Dispatchers.IO) {
+            favoriteEventDao.isFavorite(eventId) != null
+        }
     }
 
 

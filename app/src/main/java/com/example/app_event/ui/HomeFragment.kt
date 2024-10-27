@@ -1,5 +1,7 @@
 package com.example.app_event.ui
 
+import ViewModelFactory
+import android.content.Intent
 import com.example.app_event.viewmodel.EventViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,6 +20,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EventViewModel
+    private lateinit var viewModelFactory: ViewModelFactory
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,7 +32,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[EventViewModel::class.java]
+        viewModelFactory = ViewModelFactory(requireContext())
+        viewModel = ViewModelProvider(this, viewModelFactory)[EventViewModel::class.java]
         binding.rvActiveEvents.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         binding.rvActiveEvents.setHasFixedSize(true)
         binding.rvFinishedEvents.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
@@ -42,11 +46,33 @@ class HomeFragment : Fragment() {
 
             if (events.isNotEmpty()) {
                 if (viewModel.getLastStatus() == 1) {
-                    val activeAdapter = EventAdapter(events.take(5))
+                    val activeAdapter = EventAdapter(events.take(5)) { event ->
+                        val intent = Intent(requireContext(), DetailEventActivity::class.java)
+                        intent.putExtra("event_name", event.name)
+                        intent.putExtra("owner_name", event.ownerName)
+                        intent.putExtra("begin_time", event.beginTime)
+                        intent.putExtra("quota", event.quota)
+                        intent.putExtra("registrants", event.registrants)
+                        intent.putExtra("description", event.description)
+                        intent.putExtra("image_logo", event.imageLogo)
+                        intent.putExtra("event_link", event.evenLink)
+                        startActivity(intent)
+                    }
                     binding.rvActiveEvents.adapter = activeAdapter
                     viewModel.loadEvents(0)
                 } else if (viewModel.getLastStatus() == 0) {
-                    val finishedAdapter = EventAdapter(events.take(5))
+                    val finishedAdapter = EventAdapter(events.take(5)) { event ->
+                        val intent = Intent(requireContext(), DetailEventActivity::class.java)
+                        intent.putExtra("event_name", event.name)
+                        intent.putExtra("owner_name", event.ownerName)
+                        intent.putExtra("begin_time", event.beginTime)
+                        intent.putExtra("quota", event.quota)
+                        intent.putExtra("registrants", event.registrants)
+                        intent.putExtra("description", event.description)
+                        intent.putExtra("image_logo", event.imageLogo)
+                        intent.putExtra("event_link", event.evenLink)
+                        startActivity(intent)
+                    }
                     binding.rvFinishedEvents.adapter = finishedAdapter
                 }
             }

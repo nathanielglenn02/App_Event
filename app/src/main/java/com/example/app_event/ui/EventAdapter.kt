@@ -8,7 +8,9 @@ import com.bumptech.glide.Glide
 import com.example.app_event.databinding.ItemEventBinding
 import com.example.app_event.model.EventItem
 
-class EventAdapter(private val events: List<EventItem>) :
+class EventAdapter(
+    private var events: List<EventItem>,
+    private val onItemClick: (EventItem) -> Unit) :
     RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
 
     inner class EventViewHolder(private val binding: ItemEventBinding) :
@@ -25,6 +27,7 @@ class EventAdapter(private val events: List<EventItem>) :
             binding.root.setOnClickListener {
                 val context = binding.root.context
                 val intent = Intent(context, DetailEventActivity::class.java)
+                intent.putExtra("event_id", event.id.toInt())
                 intent.putExtra("event_name", event.name)
                 intent.putExtra("owner_name", event.ownerName)
                 intent.putExtra("begin_time", event.beginTime)
@@ -48,4 +51,10 @@ class EventAdapter(private val events: List<EventItem>) :
     }
 
     override fun getItemCount(): Int = events.size
+
+    // Fungsi untuk memperbarui data events
+    fun updateEvents(newEvents: List<EventItem>) {
+        events = newEvents
+        notifyDataSetChanged()
+    }
 }

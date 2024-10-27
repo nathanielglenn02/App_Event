@@ -1,6 +1,7 @@
 package com.example.app_event.ui
 
-import com.example.app_event.viewmodel.EventViewModel
+import ViewModelFactory
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.app_event.databinding.FragmentSearchBinding
+import com.example.app_event.viewmodel.EventViewModel
 
 class SearchFragment : Fragment() {
 
@@ -18,6 +20,7 @@ class SearchFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EventViewModel
+    private lateinit var viewModelFactory: ViewModelFactory
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,9 +32,13 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[EventViewModel::class.java]
+
+        viewModelFactory = ViewModelFactory(requireContext())
+        viewModel = ViewModelProvider(this, viewModelFactory)[EventViewModel::class.java]
+
         binding.rvSearchResults.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSearchResults.setHasFixedSize(true)
+
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
@@ -49,7 +56,18 @@ class SearchFragment : Fragment() {
         viewModel.searchResults.observe(viewLifecycleOwner) { results ->
             binding.progressBar.visibility = View.GONE
             if (results.isNotEmpty()) {
-                val adapter = EventAdapter(results)
+                val adapter = EventAdapter(results) { event ->
+                    val intent = Intent(requireContext(), DetailEventActivity::class.java)
+                    intent.putExtra("event_name", event.name)
+                    intent.putExtra("owner_name", event.ownerName)
+                    intent.putExtra("begin_time", event.beginTime)
+                    intent.putExtra("quota", event.quota)
+                    intent.putExtra("registrants", event.registrants)
+                    intent.putExtra("description", event.description)
+                    intent.putExtra("image_logo", event.imageLogo)
+                    intent.putExtra("event_link", event.evenLink)
+                    startActivity(intent)
+                }
                 binding.rvSearchResults.adapter = adapter
             } else {
                 Toast.makeText(requireContext(), "No results found", Toast.LENGTH_SHORT).show()

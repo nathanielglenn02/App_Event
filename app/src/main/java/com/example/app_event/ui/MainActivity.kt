@@ -34,6 +34,10 @@ class MainActivity : AppCompatActivity() {
                     openFragment(SearchFragment())
                     true
                 }
+                R.id.nav_favourite_events -> {
+                    openFragment(FavouriteFragment())
+                    true
+                }
                 else -> false
             }
         }
