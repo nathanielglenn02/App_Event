@@ -7,8 +7,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.ui.AppBarConfiguration
 import com.example.app_event.R
+import com.example.app_event.data.SettingPreferences
 import com.example.app_event.data.ThemePreferences
 import com.example.app_event.data.dataStore
+import com.example.app_event.data.reminderDataStore
 import com.example.app_event.viewmodel.SettingsViewModel
 import com.example.app_event.viewmodel.SettingsViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -20,9 +22,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inisialisasi ThemePreferences dan SettingsViewModel
-        val preferences = ThemePreferences.getInstance(applicationContext.dataStore)
-        val factory = SettingsViewModelFactory(preferences)
+        // Inisialisasi ThemePreferences dan SettingPreferences
+        val themePreferences = ThemePreferences.getInstance(applicationContext.dataStore)
+        val settingPreferences = SettingPreferences.getInstance(applicationContext.reminderDataStore)
+        val factory = SettingsViewModelFactory(themePreferences, settingPreferences)
+
+        // Inisialisasi SettingsViewModel
         settingsViewModel = ViewModelProvider(this, factory).get(SettingsViewModel::class.java)
 
         // Observe pengaturan tema sebelum menampilkan layout
@@ -35,8 +40,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Set layout setelah tema diterapkan
-        setContentView(R.layout.activity_main)
-
         setContentView(R.layout.activity_main)
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         AppBarConfiguration(

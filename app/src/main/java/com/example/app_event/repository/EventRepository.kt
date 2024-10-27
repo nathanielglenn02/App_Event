@@ -13,7 +13,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class EventRepository(private val context: Context) {
+class EventRepository(context: Context) {
 
     private val _events = MutableLiveData<List<EventItem>>()
     val events: LiveData<List<EventItem>> = _events
