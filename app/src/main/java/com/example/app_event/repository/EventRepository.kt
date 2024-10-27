@@ -59,28 +59,24 @@ class EventRepository(private val context: Context) {
         })
     }
 
-    // Fungsi untuk menambahkan event ke daftar favorit
     suspend fun addEventToFavorite(event: FavoriteEvent) {
         withContext(Dispatchers.IO) {
             favoriteEventDao.addToFavorite(event)
         }
     }
 
-    // Fungsi untuk menghapus event dari daftar favorit
     suspend fun removeEventFromFavorite(event: FavoriteEvent) {
         withContext(Dispatchers.IO) {
             favoriteEventDao.removeFromFavorite(event)
         }
     }
 
-    // Mengambil semua event favorit
     suspend fun getAllFavoriteEvents(): List<FavoriteEvent> {
         return withContext(Dispatchers.IO) {
             favoriteEventDao.getFavoriteEvents()
         }
     }
 
-    // Memeriksa apakah event sudah ada di daftar favorit
     suspend fun isFavorite(eventId: Int): Boolean {
         return withContext(Dispatchers.IO) {
             favoriteEventDao.isFavorite(eventId) != null

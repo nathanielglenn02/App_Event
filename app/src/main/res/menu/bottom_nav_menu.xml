@@ -5,10 +5,10 @@
         android:id="@+id/nav_home_events"
         android:icon="@drawable/ic_home"
         android:title="@string/home_events" />
-    <item
-        android:id="@+id/nav_search_event"
-        android:icon="@drawable/ic_search"
-        android:title="@string/search" />
+<!--    <item-->
+<!--        android:id="@+id/nav_search_event"-->
+<!--        android:icon="@drawable/ic_search"-->
+<!--        android:title="@string/search" />-->
     <item
         android:id="@+id/nav_active_events"
         android:icon="@drawable/ic_event"
@@ -21,6 +21,11 @@
         android:id="@+id/nav_favourite_events"
         android:icon="@drawable/ic_favourite"
         android:title="@string/favourite_events" />
+
+    <item
+        android:id="@+id/nav_settings_events"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/setting_events" />
 
 
 
