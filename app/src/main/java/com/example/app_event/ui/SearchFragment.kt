@@ -1,7 +1,6 @@
 package com.example.app_event.ui
 
 import ViewModelFactory
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -56,18 +55,7 @@ class SearchFragment : Fragment() {
         viewModel.searchResults.observe(viewLifecycleOwner) { results ->
             binding.progressBar.visibility = View.GONE
             if (results.isNotEmpty()) {
-                val adapter = EventAdapter(results) { event ->
-                    val intent = Intent(requireContext(), DetailEventActivity::class.java)
-                    intent.putExtra("event_name", event.name)
-                    intent.putExtra("owner_name", event.ownerName)
-                    intent.putExtra("begin_time", event.beginTime)
-                    intent.putExtra("quota", event.quota)
-                    intent.putExtra("registrants", event.registrants)
-                    intent.putExtra("description", event.description)
-                    intent.putExtra("image_logo", event.imageLogo)
-                    intent.putExtra("event_link", event.evenLink)
-                    startActivity(intent)
-                }
+                val adapter = EventAdapter(results)
                 binding.rvSearchResults.adapter = adapter
             } else {
                 Toast.makeText(requireContext(), "No results found", Toast.LENGTH_SHORT).show()

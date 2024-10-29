@@ -55,10 +55,10 @@ class MainActivity : AppCompatActivity() {
                     openFragment(FinishedEventsFragment())
                     true
                 }
-                R.id.nav_home_events -> {
-                    openFragment(HomeFragment())
-                    true
-                }
+//                R.id.nav_home_events -> {
+//                    openFragment(HomeFragment())
+//                    true
+//                }
 //                R.id.nav_search_event -> {
 //                    openFragment(SearchFragment())
 //                    true
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         if (savedInstanceState == null) {
-            openFragment(HomeFragment())
+            openFragment(ActiveEventsFragment())
         }
     }
 

@@ -1,7 +1,6 @@
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.app_event.data.ThemePreferences
 import com.example.app_event.viewmodel.EventViewModel
 
 class ViewModelFactory(

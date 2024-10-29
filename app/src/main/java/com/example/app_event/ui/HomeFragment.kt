@@ -1,7 +1,6 @@
 package com.example.app_event.ui
 
 import ViewModelFactory
-import android.content.Intent
 import com.example.app_event.viewmodel.EventViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,6 +21,9 @@ class HomeFragment : Fragment() {
     private lateinit var viewModel: EventViewModel
     private lateinit var viewModelFactory: ViewModelFactory
 
+    private var isActiveEventLoaded = false
+    private var isFinishedEventLoaded = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,53 +36,47 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModelFactory = ViewModelFactory(requireContext())
         viewModel = ViewModelProvider(this, viewModelFactory)[EventViewModel::class.java]
+
         binding.rvActiveEvents.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         binding.rvActiveEvents.setHasFixedSize(true)
         binding.rvFinishedEvents.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         binding.rvFinishedEvents.setHasFixedSize(true)
+
         binding.progressBar.visibility = View.VISIBLE
 
+        loadActiveEvents()
+    }
+
+    private fun loadActiveEvents() {
         viewModel.loadEvents(1)
         viewModel.events.observe(viewLifecycleOwner) { events ->
-            binding.progressBar.visibility = View.GONE
+            if (viewModel.getLastStatus() == 1) {
+                binding.progressBar.visibility = View.GONE
 
-            if (events.isNotEmpty()) {
-                if (viewModel.getLastStatus() == 1) {
-                    val activeAdapter = EventAdapter(events.take(5)) { event ->
-                        val intent = Intent(requireContext(), DetailEventActivity::class.java)
-                        intent.putExtra("event_name", event.name)
-                        intent.putExtra("owner_name", event.ownerName)
-                        intent.putExtra("begin_time", event.beginTime)
-                        intent.putExtra("quota", event.quota)
-                        intent.putExtra("registrants", event.registrants)
-                        intent.putExtra("description", event.description)
-                        intent.putExtra("image_logo", event.imageLogo)
-                        intent.putExtra("event_link", event.evenLink)
-                        startActivity(intent)
-                    }
+                if (events.isNotEmpty()) {
+                    val activeAdapter = EventAdapter(events.take(5))
                     binding.rvActiveEvents.adapter = activeAdapter
-                    viewModel.loadEvents(0)
-                } else if (viewModel.getLastStatus() == 0) {
-                    val finishedAdapter = EventAdapter(events.take(5)) { event ->
-                        val intent = Intent(requireContext(), DetailEventActivity::class.java)
-                        intent.putExtra("event_name", event.name)
-                        intent.putExtra("owner_name", event.ownerName)
-                        intent.putExtra("begin_time", event.beginTime)
-                        intent.putExtra("quota", event.quota)
-                        intent.putExtra("registrants", event.registrants)
-                        intent.putExtra("description", event.description)
-                        intent.putExtra("image_logo", event.imageLogo)
-                        intent.putExtra("event_link", event.evenLink)
-                        startActivity(intent)
-                    }
-                    binding.rvFinishedEvents.adapter = finishedAdapter
+                    isActiveEventLoaded = true
                 }
+                loadFinishedEvents()
             }
-            else{
-                viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
-                    if (!errorMessage.isNullOrEmpty()) {
-                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
-                    }
+        }
+    }
+
+    private fun loadFinishedEvents() {
+        binding.progressBar.visibility = View.VISIBLE
+
+        viewModel.loadEvents(0)
+        viewModel.events.observe(viewLifecycleOwner) { events ->
+            if (viewModel.getLastStatus() == 0) {
+                if (events.isNotEmpty()) {
+                    val finishedAdapter = EventAdapter(events.take(5))
+                    binding.rvFinishedEvents.adapter = finishedAdapter
+                    isFinishedEventLoaded = true
+                }
+
+                if (isActiveEventLoaded && isFinishedEventLoaded) {
+                    binding.progressBar.visibility = View.GONE
                 }
             }
         }
@@ -91,3 +87,5 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 }
+
+

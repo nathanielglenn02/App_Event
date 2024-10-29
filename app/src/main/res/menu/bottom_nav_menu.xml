@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/nav_home_events"
-        android:icon="@drawable/ic_home"
-        android:title="@string/home_events" />
+<!--    <item-->
+<!--        android:id="@+id/nav_home_events"-->
+<!--        android:icon="@drawable/ic_home"-->
+<!--        android:title="@string/home_events" />-->
 <!--    <item-->
 <!--        android:id="@+id/nav_search_event"-->
 <!--        android:icon="@drawable/ic_search"-->

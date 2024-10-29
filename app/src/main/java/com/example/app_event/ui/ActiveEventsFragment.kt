@@ -1,7 +1,6 @@
 package com.example.app_event.ui
 
 import ViewModelFactory
-import android.content.Intent
 import com.example.app_event.viewmodel.EventViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -43,11 +42,7 @@ class ActiveEventsFragment : Fragment() {
         viewModel.events.observe(viewLifecycleOwner) { events ->
             binding.progressBar.visibility = View.GONE
             if (events.isNotEmpty()) {
-                val adapter = EventAdapter(events) { event ->
-                    val intent = Intent(requireContext(), DetailEventActivity::class.java)
-                    intent.putExtra("event_name", event.name)
-                    startActivity(intent)
-                }
+                val adapter = EventAdapter(events)
                 binding.rvEvents.adapter = adapter
             } else {
                 viewModel.error.observe(viewLifecycleOwner) { errorMessage ->

@@ -4,7 +4,10 @@ import ViewModelFactory
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
+import android.text.Spanned
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -46,7 +49,9 @@ class DetailEventActivity : AppCompatActivity() {
         binding.tvOwnerName.text = ownerName
         binding.tvBeginTime.text = "Start: $beginTime"
         binding.tvQuota.text = "Quota: $remainingQuota"
-        binding.tvDescription.text = description
+        if (description != null) {
+            binding.tvDescription.text = fromHtml(description)
+        }
 
         Glide.with(this)
             .load(imageLogo)
@@ -87,6 +92,16 @@ class DetailEventActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ObsoleteSdkInt")
+    @Suppress("DEPRECATION")
+    private fun fromHtml(html: String): Spanned {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            Html.fromHtml(html)
+        }
+    }
+
     private fun updateFavoriteButton() {
         if (isFavorite) {
             binding.fabFavorite.setImageResource(R.drawable.ic_favourite)
@@ -94,4 +109,5 @@ class DetailEventActivity : AppCompatActivity() {
             binding.fabFavorite.setImageResource(R.drawable.ic_favourite_border)
         }
     }
+
 }

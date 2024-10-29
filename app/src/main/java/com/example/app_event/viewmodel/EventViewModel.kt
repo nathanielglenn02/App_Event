@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class EventViewModel(private val context: Context) : ViewModel() {
+class EventViewModel(context: Context) : ViewModel() {
 
     private val repository = EventRepository(context)
     private val _isLoading = MutableLiveData<Boolean>()
@@ -41,12 +41,6 @@ class EventViewModel(private val context: Context) : ViewModel() {
     }
     fun getLastStatus(): Int {
         return lastStatus
-    }
-
-    suspend fun getAllFavoriteEvents(): List<FavoriteEvent> {
-        return withContext(Dispatchers.IO) {
-            repository.getAllFavoriteEvents()
-        }
     }
 
     fun addEventToFavorite(event: FavoriteEvent) {

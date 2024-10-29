@@ -30,13 +30,25 @@ class FavouriteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         repository = EventRepository(requireContext())
         binding.rvFavouriteEvents.layoutManager = LinearLayoutManager(requireContext())
-        adapter = EventAdapter(emptyList(), this::onEventClick)
+        adapter = EventAdapter(emptyList())
         binding.rvFavouriteEvents.adapter = adapter
         binding.progressBar.visibility = View.VISIBLE
 
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.progressBar.visibility = View.VISIBLE
+            loadFavoriteEvents()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.progressBar.visibility = View.VISIBLE
+        loadFavoriteEvents()
+    }
+
+    private fun loadFavoriteEvents() {
         lifecycleScope.launch {
             val favoriteEvents = repository.getAllFavoriteEvents()
             binding.progressBar.visibility = View.GONE
@@ -56,12 +68,10 @@ class FavouriteFragment : Fragment() {
                     )
                 })
             } else {
-                binding.progressBar.visibility = View.GONE
+                adapter.updateEvents(emptyList())
             }
+            binding.swipeRefreshLayout.isRefreshing = false
         }
-    }
-
-    private fun onEventClick(event: EventItem) {
     }
 
     override fun onDestroyView() {

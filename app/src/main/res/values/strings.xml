@@ -3,15 +3,15 @@
     <string name="event_name">Event Name</string>
     <string name="owner_name">Owner Name</string>
     <string name="begin_time">Begin Time</string>
-    <string name="active_events">Active Events</string>
-    <string name="finished_events">Finished Events</string>
-    <string name="home_events">Home Events</string>
+    <string name="active_events">Active</string>
+    <string name="finished_events">Finished</string>
+    <string name="home_events">Home</string>
     <string name="quota">Quota</string>
     <string name="description">Description</string>
     <string name="open_event_link">Open Event Link</string>
     <string name="image">image</string>
     <string name="search">Search</string>
-    <string name="favourite_events">Favourite Events</string>
+    <string name="favourite_events">Favourite</string>
     <string name="favorite_button">Favorite Button</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

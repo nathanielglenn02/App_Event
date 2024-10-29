@@ -9,8 +9,8 @@ import com.example.app_event.databinding.ItemEventBinding
 import com.example.app_event.model.EventItem
 
 class EventAdapter(
-    private var events: List<EventItem>,
-    private val onItemClick: (EventItem) -> Unit) :
+    private var events: List<EventItem>
+) :
     RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
 
     inner class EventViewHolder(private val binding: ItemEventBinding) :
